@@ -1,17 +1,19 @@
 type MaybePromise<T> = Promise<T> | T;
 type MaybeArray<T> = Array<T> | T;
 
-type NextFunction<TContext> = (ctx: TContext) => void;
-type MiddlewareFn<TContext> = (ctx: TContext, next: NextFunction<TContext>) => void;
-type MiddlewareObj<TContext> = {
+export type NextFunction<TContext> = (ctx: TContext) => void;
+export type MiddlewareFn<TContext> = (ctx: TContext, next: NextFunction<TContext>) => void;
+export type MiddlewareObj<TContext> = {
   middleware(): MiddlewareFn<TContext>;
 };
-type Middleware<TContext> = MiddlewareFn<TContext> | MiddlewareObj<TContext>;
+export type Middleware<TContext> = MiddlewareFn<TContext> | MiddlewareObj<TContext>;
 
 export function concat<TContext>(first: MiddlewareFn<TContext>, andThen: MiddlewareFn<TContext>) {
   return (ctx: TContext, next: NextFunction<TContext>) => {
     let nextCalled = false;
+    JSON.stringify({ ctx });
     return first(ctx, async (newCtx) => {
+      JSON.stringify({ newCtx });
       if (nextCalled) throw new Error("next already called!");
       nextCalled = true;
       await andThen(newCtx, next);
@@ -48,15 +50,15 @@ export class Composer<TContext> {
   }
 
   use(...middleware: Middleware<TContext>[]) {
-    const composer = new Composer(...middleware);
-    this.handler = concat(this.handler, composer.middleware());
-    return composer;
+    const tree = new Composer(...middleware);
+    this.handler = concat(this.handler, tree.middleware());
+    return tree;
   }
 
   before(...middlewares: Middleware<TContext>[]) {
-    const composer = new Composer<TContext>(...middlewares);
-    this.handler = concat(composer.middleware(), this.handler);
-    return composer;
+    const tree = new Composer<TContext>(...middlewares);
+    this.handler = concat(tree.middleware(), this.handler);
+    return tree;
   }
 
   after(deffered: (ctx: TContext) => void) {
@@ -67,16 +69,18 @@ export class Composer<TContext> {
   }
 
   fork(...middleware: Array<Middleware<TContext>>) {
-    const composer = new Composer(...middleware);
-    this.use((ctx, next) => Promise.all([next(ctx), run(ctx, composer.middleware())]));
-    return composer;
+    const tree = new Composer(...middleware);
+    this.use((ctx, next) => Promise.all([next(ctx), run(ctx, tree.middleware())]));
+    return tree;
   }
 
   lazy(middlewareFactory: (ctx: TContext) => MaybePromise<MaybeArray<Middleware<TContext>>>) {
     return this.use(async (ctx, next) => {
       const middleware = await middlewareFactory(ctx);
       const arr = Array.isArray(middleware) ? middleware : [middleware];
-      return next(await run(ctx, new Composer(...arr).middleware()));
+      const newCtx = await run(ctx, arr.map(flatten).reduce(concat));
+      console.log(newCtx);
+      return next(newCtx);
     });
   }
 
@@ -85,7 +89,7 @@ export class Composer<TContext> {
     trueMiddleware: MaybeArray<Middleware<TContext>>,
     falseMiddleware: MaybeArray<Middleware<TContext>>,
   ) {
-    return this.lazy(async (ctx) => (await predicate(ctx)) ? trueMiddleware : falseMiddleware);
+    this.lazy(async (ctx) => (await predicate(ctx)) ? trueMiddleware : falseMiddleware);
   }
 
   filter<D extends TContext>(
@@ -100,32 +104,12 @@ export class Composer<TContext> {
     predicate: (ctx: TContext) => MaybePromise<boolean>,
     ...middleware: Array<Middleware<TContext>>
   ) {
-    const composer = new Composer(...middleware);
-    this.branch(predicate, composer, (_, next) => next(_));
-    return composer;
+    const tree = new Composer(...middleware);
+    this.branch(predicate, tree, (_, next) => next(_));
+    return tree;
   }
 
   execute(ctx: TContext) {
     return run(ctx, this.handler);
   }
 }
-
-type Context = {
-  start: number;
-};
-
-const composer = new Composer<Context>();
-composer.before((ctx, next) => {
-  console.log("composer before");
-  next({ ...ctx, start: Date.now() });
-});
-composer.after((ctx) => console.log(`Took ${Date.now() - ctx.start} ms`));
-
-composer.use(async (ctx, next) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return next(ctx);
-});
-
-composer.execute({
-  start: 0,
-}).then(console.log);
