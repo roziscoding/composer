@@ -40,13 +40,14 @@ const port = 8080;
 
 const router = new Router<RouterContext & { start: number }>();
 router.before((ctx, next) => next({ ...ctx, start: Date.now() }));
-router.after((ctx) =>
+router.after((ctx, next) => {
   console.log(
     `[${ctx.request.method}] ${new URL(ctx.request.url).pathname} - ${ctx.response.status} in ${
       Date.now() - ctx.start
     } ms`,
-  )
-);
+  );
+  return next(ctx);
+});
 
 router.post("/", (ctx, next) => {
   return next({

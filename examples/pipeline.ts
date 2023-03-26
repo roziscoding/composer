@@ -13,7 +13,10 @@ composer.before((ctx, next) => {
   next({ ...ctx, start: Date.now() });
 });
 
-composer.after((ctx) => console.log(`Took ${Date.now() - ctx.start} ms`));
+composer.after((ctx, next) => {
+  console.log(`Took ${Date.now() - ctx.start} ms`);
+  next(ctx);
+});
 
 composer.use(async (ctx, next) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
