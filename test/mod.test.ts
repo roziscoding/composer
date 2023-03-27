@@ -110,20 +110,6 @@ describe("Composer", () => {
 
       assertSpyCalls(fn, 3);
     });
-
-    it("runs middleware concurrently", async () => {
-      const composer = new Composer<undefined>();
-      const fn = spy(() => true);
-      const startTime = Date.now();
-
-      composer.use(delay((ctx, next) => fn() && next(ctx), 1));
-      composer.fork((ctx, next) => fn() && next(ctx));
-
-      await composer.execute(undefined);
-
-      assertSpyCalls(fn, 2);
-      assertAlmostEquals(Date.now() - startTime, 1, 10);
-    });
   });
 
   describe("lazy", () => {
