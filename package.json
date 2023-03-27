@@ -1,6 +1,6 @@
 {
   "name": "@roziscoding/composer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Standalone implementation of the \"Chain of Command\" pattern",
   "homepage": "https://github.com/roziscoding/composer",
   "main": "./out/mod.js",
