@@ -1,7 +1,7 @@
 import { assertAlmostEquals, assertEquals } from "https://deno.land/std@0.181.0/testing/asserts.ts";
 import { describe, it } from "https://deno.land/std@0.181.0/testing/bdd.ts";
 import { assertSpyCallArg, assertSpyCalls, spy } from "https://deno.land/std@0.181.0/testing/mock.ts";
-import { Composer, MiddlewareFn } from "./mod.ts";
+import { Composer, MiddlewareFn } from "../src/mod.ts";
 
 type StepsContext = {
   steps: number[];

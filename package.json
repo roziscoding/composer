@@ -1,0 +1,32 @@
+{
+  "name": "@roziscoding/composer",
+  "version": "1.0",
+  "description": "Standalone implementation of the \"Chain of Command\" pattern",
+  "homepage": "https://github.com/roziscoding/composer",
+  "main": "./out/mod.js",
+  "type": "commonjs",
+  "scripts": {
+    "prepublishOnly": "deno task backport"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roziscoding/composer.git"
+  },
+  "exports": {
+    ".": "./out/mod.js"
+  },
+  "files": [
+    "out/"
+  ],
+  "author": "Roz <roz@rjmunhoz.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/roziscoding/composer/issues"
+  },
+  "keywords": [
+    "grammY",
+    "Telegram bot framework",
+    "plugin",
+    "chat member"
+  ]
+}

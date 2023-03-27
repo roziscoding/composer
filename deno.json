@@ -2,6 +2,18 @@
   "fmt": {
     "options": {
       "lineWidth": 120
+    },
+    "files": {
+      "exclude": [
+        "out"
+      ]
     }
+  },
+  "tasks": {
+    "backport": "rm -rf out && npm install --no-package-lock && deno run --no-prompt --allow-read=. --allow-write=. https://lib.deno.dev/x/deno2node@v1/src/cli.ts",
+    "test": "deno test --parallel ./test/",
+    "coverage": "deno task test --coverage=./test/cov_profile && deno coverage --lcov --output=./coverage.lcov ./test/cov_profile",
+    "check": "deno cache --check=all src/mod.ts",
+    "dev": "deno fmt && deno lint && deno task test && deno task check"
   }
 }
