@@ -28,5 +28,8 @@
     "Telegram bot framework",
     "plugin",
     "chat member"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
