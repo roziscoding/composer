@@ -1,5 +1,9 @@
 # Composer
 
+[![@roziscoding/composer](https://img.shields.io/npm/v/@roziscoding/composer?label=%20&logo=npm&style=flat-square)](https://www.npmjs.com/package/@roziscoding/composer)
+[![deno.land/x/composer](https://shield.deno.dev/x/composer)](https://deno.land/x/composer)
+[![composer](https://github.com/roziscoding/composer/actions/workflows/deno.yml/badge.svg)](https://github.com/roziscoding/composer/actions/workflows/deno.yml)
+
 Standalone implementation of the "Chain of Command" pattern. Heavily inspired by
 [grammY's Composer class](https://github.com/grammyjs/grammy/tree/main/src/composer.ts)
 

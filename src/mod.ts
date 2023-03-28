@@ -189,18 +189,9 @@ export class Composer<TContext> {
    * @param predicate The predicate to check
    * @param middleware The middleware to register
    */
-  filter<D extends TContext>(
-    predicate: (ctx: TContext) => ctx is D,
-    ...middleware: Array<Middleware<D>>
-  ): Composer<D>;
-  filter(
-    predicate: (ctx: TContext) => MaybePromise<boolean>,
-    ...middleware: Array<Middleware<TContext>>
-  ): this;
-  filter(
-    predicate: (ctx: TContext) => MaybePromise<boolean>,
-    ...middleware: Array<Middleware<TContext>>
-  ) {
+  filter<D extends TContext>(predicate: (ctx: TContext) => ctx is D, ...middleware: Array<Middleware<D>>): Composer<D>;
+  filter(predicate: (ctx: TContext) => MaybePromise<boolean>, ...middleware: Array<Middleware<TContext>>): this;
+  filter(predicate: (ctx: TContext) => MaybePromise<boolean>, ...middleware: Array<Middleware<TContext>>) {
     const tree = new Composer(...middleware);
     this.branch(predicate, tree, (_, next) => next(_));
     return tree;
