@@ -14,6 +14,8 @@
     "test": "deno test --parallel ./test/",
     "coverage": "deno task test --coverage=./test/cov_profile && deno coverage --lcov --output=./coverage.lcov ./test/cov_profile",
     "check": "deno cache --check=all src/mod.ts",
-    "dev": "deno fmt && deno lint && deno task test && deno task check"
+    "dev": "deno fmt && deno lint && deno task test && deno task check",
+    "pre-commit": "deno fmt --check && deno lint && deno task test && deno task check",
+    "hook": "deno run --allow-run=git --allow-read --allow-write https://deno.land/x/deno_hooks@0.1.1/mod.ts"
   }
 }
