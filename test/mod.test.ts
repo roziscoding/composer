@@ -91,6 +91,16 @@ describe("Composer", () => {
 
       assertEquals(afterCtx, result);
     });
+
+    it("preserves order when used multiple times", () => {
+      const composer = new StepsComposer();
+      composer.use(addStep(1));
+
+      composer.after(addStep(2));
+      composer.after(addStep(3));
+
+      assertSteps(composer, [1, 2, 3]);
+    });
   });
 
   describe("fork", () => {
