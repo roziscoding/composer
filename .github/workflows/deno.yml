@@ -1,4 +1,4 @@
-name: composer
+name: sanity
 
 on:
   push:
